@@ -63,7 +63,7 @@ const Navbar = ({ handleSwitchToLogin, handleSwitchToRegister }) => {
                 </ul>
                 <div className="logo" onClick={handleNavHome}>
                     <img src={star} alt="" />
-                    <h1>Celestial</h1>
+                    <h1>Zoevestica</h1>
                     <img src={star} alt="" />
                 </div>
                 <ul>

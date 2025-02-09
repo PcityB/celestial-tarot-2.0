@@ -49,7 +49,7 @@ const Journal = () => {
   useEffect(() => {
     const fetchReadings = async () => {
       if (currentUser) {
-        const q = query(collection(db, 'celestial', currentUser.uid, 'readings'));
+        const q = query(collection(db, 'zoevestica', currentUser.uid, 'readings'));
         const querySnapshot = await getDocs(q);
         const userReadings = querySnapshot.docs.map(doc => ({
           id: doc.id,
@@ -359,7 +359,7 @@ const Journal = () => {
          
 
                 try {
-                  const readingRef = doc(db, 'celestial', currentUser.uid, 'readings', readingId);
+                  const readingRef = doc(db, 'zoevestica', currentUser.uid, 'readings', readingId);
                   await updateDoc(readingRef, {
                     tags: readingTags, 
                     note: note, 

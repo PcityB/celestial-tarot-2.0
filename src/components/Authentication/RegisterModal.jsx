@@ -45,8 +45,8 @@ const RegisterModal = ({ handleSwitchToLogin, handleCloseAuth }) => {
                 const userCredential = await doCreateUserWithEmailAndPassword(email, password);
                 const { uid, email: userEmail } = userCredential.user;
 
-                const celestialRef = doc(db, 'celestial', uid);
-                await setDoc(celestialRef, {
+                const zoevesticaRef = doc(db, 'zoevestica', uid);
+                await setDoc(zoevesticaRef, {
                     uid: uid,
                     email: userEmail,
                     ipAddress: ipAddress,
@@ -88,7 +88,7 @@ const RegisterModal = ({ handleSwitchToLogin, handleCloseAuth }) => {
                 <form onSubmit={onSubmit}>
                     <div className="logo">
                         <img src={star} alt="" />
-                        <h1>Celestial</h1>
+                        <h1>Zoevestica</h1>
                         <img src={star} alt="" />
                     </div>
                     <div className="toggle">

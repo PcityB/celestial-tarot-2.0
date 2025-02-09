@@ -27,7 +27,7 @@ const Home = () => {
               <span>THE STARS</span>
             </div>
             <div>
-              Celestial
+              Zoevestica
             </div>
             <div>
               begins here
@@ -36,7 +36,7 @@ const Home = () => {
           <div className="right">
             <div>
               <img src={star} className='spinning' />
-              <p><span>Stars </span>illumination your<br /><span>Celestial path</span></p>
+              <p><span>Stars </span>illumination your<br /><span>Zoevestica path</span></p>
             </div>
             <div>
               <Link to='./reading' className='floating' >

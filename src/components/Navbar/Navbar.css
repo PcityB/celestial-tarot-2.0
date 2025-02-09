@@ -32,7 +32,7 @@ nav li {
 
 nav ul:nth-child(1) li:nth-child(2) {
   opacity: 0;
-  cursor: default;
+ /*cursor : default;*/
 }
 
 nav ul {
@@ -77,7 +77,7 @@ nav li {
 	color: white;
   position: relative;
   text-decoration: none;
-  cursor: pointer;
+  /*cursor: pointer;*/
 }
 
 nav li::before {

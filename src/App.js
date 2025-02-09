@@ -31,10 +31,10 @@ const handleCloseAuth = () => {
 }
   return (
     <AuthProvider>
-      <Router basename='celestial-tarot-2.0'>
+      <Router basename='zoevestica'>
         <AnimatedCursor
-          innerSize={8}
-          outerSize={12}
+          innerSize={10}
+          outerSize={14}
           color='255,255,255'
           outerAlpha={0.4}
           innerScale={0.5}
@@ -56,18 +56,7 @@ const handleCloseAuth = () => {
             'label',
             '.clear',
             '.expand-details',
-            '.logo',
-            {
-              target: '.about-section',
-              options: {
-                innerSize: 100,
-                outerSize: 300,
-                color: '255,255,255',
-                outerAlpha: 0.7,
-                innerScale: 0.5,
-                outerScale: 3.5
-              }
-            }
+            '.logo'
           ]}
         />
         {!userLoggedIn && showLogin && <LoginModal handleSwitchToRegister={handleSwitchToRegister} handleCloseAuth={handleCloseAuth} />}

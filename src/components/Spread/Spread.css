@@ -1,6 +1,6 @@
 .dropdown {
   min-width: 15vw;
-  cursor: pointer;
+  /*cursor: pointer;*/
   position: relative;
 }
 

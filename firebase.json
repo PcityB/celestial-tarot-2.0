@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "build",
-    "site":"celestial-tarot-57f19",
+    "site":"zoevestica",
     "ignore": [
       "firebase.json",
       "**/.*",

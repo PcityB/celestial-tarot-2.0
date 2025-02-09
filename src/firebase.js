@@ -3,14 +3,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAB_Rfs2PneOxpuIiTj63N0wHgmqoAPj6E",
-  authDomain: "celestial-tarot-57f19.firebaseapp.com",
-  databaseURL: "https://celestial-tarot-57f19-default-rtdb.firebaseio.com/",
-  projectId: "celestial-tarot-57f19",
-  storageBucket: "celestial-tarot-57f19.appspot.com",
-  messagingSenderId: "138791576960",
-  appId: "1:138791576960:web:c3c90238b83d7339298d65",
-  measurementId: "G-D2J0L7WCBZ"
+  apiKey: "AIzaSyBHHWZx8ppiiuQhl38c7SGDDJdtr80lRg8",
+  authDomain: "zoevestica.firebaseapp.com",
+  projectId: "zoevestica",
+  storageBucket: "zoevestica.firebasestorage.app",
+  messagingSenderId: "336294693046",
+  appId: "1:336294693046:web:03787f9bfd1cc000123e17",
+  measurementId: "G-TGNJFPH37C"
 };
 
 const app = initializeApp(firebaseConfig);

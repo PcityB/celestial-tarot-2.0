@@ -3,9 +3,9 @@ import { useAuth } from '../../authContext';
 import { db } from '../../firebase';
 import { collection, addDoc, doc, serverTimestamp } from 'firebase/firestore';
 import WaterWave from "react-water-wave";
-import axios from 'axios';
-import './Reading.css'
-import background from '../../assets/images/reading.png'
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import './Reading.css';
+import background from '../../assets/images/reading.png';
 import spreadData from '../../data/spreadData';
 import LoginModal from '../../components/Authentication/LoginModal';
 import RegisterModal from '../../components/Authentication/RegisterModal';
@@ -14,12 +14,15 @@ import PastReadings from '../../components/PastReadings/PastReadings';
 import Feedback from '../../components/Feedback/Feedback';
 import Design from '../../components/Design/Design';
 import Spread from '../../components/Spread/Spread';
-import icon1 from '../../assets/images/reading-icon (1).png'
-import icon2 from '../../assets/images/reading-icon (2).png'
-import icon3 from '../../assets/images/reading-icon (3).png'
-import arrow from '../../assets/ui/arrow_cricle.png'
+import icon1 from '../../assets/images/reading-icon (1).png';
+import icon2 from '../../assets/images/reading-icon (2).png';
+import icon3 from '../../assets/images/reading-icon (3).png';
+import arrow from '../../assets/ui/arrow_cricle.png';
 import Shuffle from '../../components/Shuffle/Shuffle';
 import Result from '../../components/Result/Result';
+
+const genAI = new GoogleGenerativeAI("AIzaSyCSMbv2z4FVRFTTQZk-pW_d_O37b_zhixY");
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 const Reading = ({ handleSwitchToRegister, handleSwitchToLogin }) => {
     const { userLoggedIn, currentUser } = useAuth();
@@ -29,10 +32,10 @@ const Reading = ({ handleSwitchToRegister, handleSwitchToLogin }) => {
     const [selectedCards, setSelectedCards] = useState([]);
     const [cards, setCards] = useState([]);
     const [tags, setTags] = useState([]);
-    const [result, setResult] = useState('')
+    const [result, setResult] = useState('');
     const [save, setSave] = useState(true); 
     const [note, setNote] = useState('');
-    const [images, setImages] = useState([])
+    const [images, setImages] = useState([]);
     const [isLoading, setIsLoading] = useState(true); 
     const [showLogin, setShowLogin] = useState(false);
     const [showRegister, setShowRegister] = useState(false); 
@@ -69,42 +72,41 @@ const Reading = ({ handleSwitchToRegister, handleSwitchToLogin }) => {
 
     useEffect(() => {
         if (currentUser) {
-            setIsEmailVerified(currentUser.emailVerified)
-        };
+            setIsEmailVerified(currentUser.emailVerified);
+        }
     }, [userLoggedIn]);
 
     useEffect(() => {
         if (question) {
-            document.querySelector('button#begin').classList = 'floating'
+            document.querySelector('button#begin').classList = 'floating';
         }
-    }, [question, setQuestion])
+    }, [question, setQuestion]);
 
     const handleBegin = () => {
         if (question) {
-            document.querySelector('.reading-container').classList.add('hide')
+            document.querySelector('.reading-container').classList.add('hide');
         } else {
-            document.querySelector('.modal').classList.remove('fade-out')
-            document.querySelector('.modal').classList.remove('floating')
-            document.querySelector('.modal').classList.add('heartbeat')
+            document.querySelector('.modal').classList.remove('fade-out');
+            document.querySelector('.modal').classList.remove('floating');
+            document.querySelector('.modal').classList.add('heartbeat');
             setTimeout(() => {
                 document.querySelector('.modal').classList.remove('heartbeat');
-                document.querySelector('.modal').classList.add('fade-out')
-              }, 1500);
+                document.querySelector('.modal').classList.add('fade-out');
+            }, 1500);
         }
-        document.querySelector('.shuffle-container').classList.remove('hide')
-        document.querySelector('.reading-container').classList.add('hide')
+        document.querySelector('.shuffle-container').classList.remove('hide');
+        document.querySelector('.reading-container').classList.add('hide');
     };
 
     const handleSaveReading = async () => {
         try {
             if (!currentUser) {
                 console.error('User not authenticated.');
-                setShowLogin(true)
+                setShowLogin(true);
                 return;
             }
-            const celestialRef = doc(db, 'celestial', currentUser.uid);
-            console.log(celestialRef);
-            const readingsRef = collection(celestialRef, 'readings');
+            const zoevesticaRef = doc(db, 'zoevestica', currentUser.uid);
+            const readingsRef = collection(zoevesticaRef, 'readings');
             await addDoc(readingsRef, {
                 question,
                 design,
@@ -118,33 +120,27 @@ const Reading = ({ handleSwitchToRegister, handleSwitchToLogin }) => {
                 createdAt: serverTimestamp()
             });
 
-            setSave(false)
+            setSave(false);
         } catch (error) {
             console.error('Error saving reading to Firestore: ', error);
         }
     };
 
     const handleGetResult = () => {
-        document.querySelector('.shuffle-container').classList.add('hide')
-        document.querySelector('.results-container').classList.remove('hide')
-        fetchData()
-    }
+        document.querySelector('.shuffle-container').classList.add('hide');
+        document.querySelector('.results-container').classList.remove('hide');
+        fetchData();
+    };
 
     const fetchData = async () => {
         try {
-        const cardStates = cards.map(card => `${card.name} ${card.reversal}`).join(', ');
+            const cardStates = cards.map(card => `${card.name} ${card.reversal}`).join(', ');
+            const prompt = `My question is: ${question}. I drew ${cards.length} cards. They are: ${cardStates}. Return 35 words per card, formatted like 'Card Name (Reversal Status) + ':'', separated by line break, start with the card name at the beginning. Take upright/reverse into account. Lastly, give one paragraph summary start with 'Summary:'. (35 words).`;
 
-    
-        const prompt = `My question is: ${question}. I drew ${cards.length} cards. They are: ${cardStates}. Return 35 words per card, formatted like 'Card Name (Reversal Status) + ':'', separated by line break, start with the card name at the beginning. Take upright/reverse into account. Lastly, give one paragraph summary start with 'Summary:'. (35 words).`;
-
-        const response = await axios.post('https://journal-app-backend-8szt.onrender.com/sendMsgToOpenAI', {
-            userMessage: prompt,
-        }, {
-            timeout: 60000, 
-        });
-            setResult(response.data.generatedResponse);
+            const result = await model.generateContent(prompt);
+            setResult(result.response.text());
         } catch (error) {
-        console.error('Error fetching data:', error);
+            console.error('Error fetching data:', error);
         }
     };
 
@@ -216,65 +212,6 @@ const Reading = ({ handleSwitchToRegister, handleSwitchToLogin }) => {
             </div>
             {!userLoggedIn && showLogin && <LoginModal handleSwitchToRegister={handleSwitchToRegister} />}
             {!userLoggedIn && showRegister && <RegisterModal handleSwitchToLogin={handleSwitchToLogin} />} 
-            {/* {userLoggedIn && !isEmailVerified && <p>Verify your email before you continue. A link has been sent</p>} */}
-            {/* {userLoggedIn && isEmailVerified && <p className='result'>Logged in content here...</p>}
-            {!userLoggedIn && showLogin && <LoginModal handleSwitchToRegister={handleSwitchToRegister} />}
-            {!userLoggedIn && showRegister && <RegisterModal handleSwitchToLogin={handleSwitchToLogin} />} 
-            {userLoggedIn && !isEmailVerified && <p>Verify your email before you continue. A link has been sent</p>}
-            <div>
-                <label>Tags:</label>
-                <div>
-                    {tags.map((tag, index) => (
-                        <span key={index} className="tag">
-                            {tag}
-                            <button className="tag-remove" onClick={() => handleRemoveTag(index)}>
-                                d
-                            </button>
-                        </span>
-                    ))}
-                </div>
-                <input
-                    type="text"
-                    value={tagsInput}
-                    onChange={(e) => setTagsInput(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    placeholder="Press Enter to add tags"
-                />
-            </div>
-            <div>
-                <label>Note:</label>
-                {editingNote ? (
-                    <div>
-                        <textarea
-                            value={noteInput}
-                            onChange={(e) => setNoteInput(e.target.value)}
-                            placeholder="Edit note..."
-                        />
-                        <button onClick={handleSaveEditedNote}>Save Note</button>
-                        <button onClick={handleCancelEditNote}>Cancel</button>
-                    </div>
-                ) : (
-                    <div>
-                        {note ? (
-                            <div>
-                                <p>{note}</p>
-                                <button onClick={handleEditNote}>Edit Note</button>
-                            </div>
-                        ) : (
-                            <div>
-                                <textarea
-                                    value={noteInput}
-                                    onChange={(e) => setNoteInput(e.target.value)}
-                                    placeholder="Add a note..."
-                                />
-                                <button onClick={handleAddNote}>Add Note</button>
-                            </div>
-                        )}
-                    </div>
-                )}
-            </div>
-            <button onClick={handleSaveReading}>Save Reading</button> */}
-
         </div>
     );
 };
